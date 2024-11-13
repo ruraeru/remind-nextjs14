@@ -1,23 +1,23 @@
-"use client"
+import Movie from "../../components/movie";
+import styles from "../../styles/home.module.css";
 
-import { useEffect, useState } from "react"
+export const metadata = {
+    title: 'Home',
+}
 
-export default function Page() {
-    const [movies, setMovies] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const getMovies = async () => {
-        const res = await fetch("https://nomad-movies.nomadcoders.workers.dev/movies");
-        const json = await res.json();
+export const API_URL = "https://nomad-movies.nomadcoders.workers.dev/movies";
 
-        setMovies(json);
-        setIsLoading(false);
-    }
-    useEffect(() => {
-        getMovies();
-    }, []);
+async function getMovies() {
+    return fetch(API_URL).then(res => res.json());
+}
+
+export default async function HomePage() {
+    const movies = await getMovies();
     return (
-        <div>
-            {isLoading ? "Loading..." : JSON.stringify(movies)}
+        <div className={styles.container}>
+            {movies.map(movie => (
+                <Movie key={movie.id} {...movie} />
+            ))}
         </div>
     )
 }
